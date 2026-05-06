@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package habitat;
+
+service HabitatService {
+  // Unary
+  rpc GetHabitatStatus (HabitatStatusRequest) returns (HabitatStatusResponse);
+
+  // Server streaming
+  rpc StreamSensorFeed (SensorFeedRequest) returns (stream SensorReading);
+
+  // Client streaming
+  rpc UploadSensorBatch (stream SensorReading) returns (BatchUploadResponse);
+
+  // Bidirectional streaming
+  rpc LiveHabitatControl (stream ControlCommand) returns (stream ControlUpdate);
+}
+
+message HabitatStatusRequest {
+  string zone_id = 1;
+}
+
+message HabitatStatusResponse {
+  string zone_id = 1;
+  string condition = 2;
+  double temperature = 3;
+  double oxygen_level = 4;
+  double sea_pressure = 5;
+  double sensor_strength = 6;
+  string last_updated = 7;
+}
+
+message SensorFeedRequest {
+  string zone_id = 1;
+}
+
+message SensorReading {
+  string zone_id = 1;
+  double temperature = 2;
+  double oxygen_level = 3;
+  double sea_pressure = 4;
+  string timestamp = 5;
+}
+
+message BatchUploadResponse {
+  int32 total_received = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ControlCommand {
+  string zone_id = 1;
+  string command_type = 2;
+  double value = 3;
+}
+
+message ControlUpdate {
+  string zone_id = 1;
+  string status = 2;
+  string timestamp = 3;
+}
